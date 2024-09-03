@@ -1,0 +1,1 @@
+export const API_URL = 'https://415386bd-acae-46ae-932a-438772dfe30a-00-1rwv69xl9q2vn.picard.replit.dev/'
