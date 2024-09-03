@@ -1,4 +1,4 @@
-import React, { useState, createContext, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import api from '../utils/api';
 
 const AuthContext = createContext(null);
@@ -6,66 +6,42 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem('token', userData.token);
-  };
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      // You might want to validate the token here
+      setUser({ token });
+    }
+  }, []);
 
-  const logout = async () => {
+  const login = async (username, password) => {
     try {
-      await api.post('/logout'); // Send logout request to server
+      const response = await api.post('/login', { username, password });
+      const { token } = response.data;
+      localStorage.setItem('token', token);
+      setUser({ token });
+      return true;
     } catch (error) {
-      console.error('Logout error', error);
-    } finally {
-      setUser(null);
-      localStorage.removeItem('token');
+      console.error('Login error', error);
+      return false;
     }
   };
 
-  return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  const logout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+  };
+
+  const value = {
+    user,
+    login,
+    logout
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-export const useAuth = () => useContext(AuthContext);
-export function LoginForm() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const { login } = useAuth();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('/api/login', { username, password });
-      console.log('Login successful', response.data);
-      login(response.data);
-      // Redirect to dashboard or home page
-    } catch (error) {
-      console.error('Login error', error.response?.data || error.message);
-      // Handle login error (e.g., display error message)
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        placeholder="Username"
-        required
-      />
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        required
-      />
-      <button type="submit">Log In</button>
-    </form>
-  );
-}
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
 

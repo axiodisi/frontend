@@ -1,11 +1,7 @@
 import axios from 'axios';
 
-const baseURL = process.env.NODE_ENV === 'production'
-    ? `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`
-    : '';
-
 const api = axios.create({
-    baseURL: baseURL,
+    baseURL: process.env.REACT_APP_API_URL || '/api',
 });
 
 // Request interceptor
@@ -26,8 +22,6 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        // If the error status is 401 and there is no originalRequest._retry flag,
-        // it means the token has expired and we need to refresh it
         if (error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 
@@ -38,8 +32,8 @@ api.interceptors.response.use(
                 // const { token } = response.data;
                 // localStorage.setItem('token', token);
 
-                // Retry the original request with the new token
-                originalRequest.headers['Authorization'] = `Bearer ${token}`;
+                const newToken = localStorage.getItem('token'); // Get the new token
+                originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
                 return api(originalRequest);
             } catch (refreshError) {
                 // Handle refresh token error or redirect to login
