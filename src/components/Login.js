@@ -1,27 +1,29 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import api from '../utils/api';
 
 function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const { login } = useAuth();
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         try {
-            await login(username, password);
+            const response = await api.post('/login', { username, password });
+            login(response.data);
             navigate('/dashboard');
         } catch (error) {
-            setError('Invalid username or password');
+            setError(error.response?.data?.message || 'An error occurred during login');
         }
     };
 
     return (
-        <div style={{ maxWidth: '300px', margin: '0 auto', textAlign: 'center' }}>
+        <div style={{ maxWidth: '300px', margin: '0 auto', padding: '20px' }}>
             <h2>Login</h2>
             <form onSubmit={handleSubmit}>
                 {error && <p style={{ color: 'red' }}>{error}</p>}

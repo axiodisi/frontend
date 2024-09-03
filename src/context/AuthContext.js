@@ -1,9 +1,8 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import api from '../utils/api';
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -14,34 +13,24 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = async (username, password) => {
-    try {
-      const response = await api.post('/login', { username, password });
-      const { token } = response.data;
-      localStorage.setItem('token', token);
-      setUser({ token });
-      return true;
-    } catch (error) {
-      console.error('Login error', error);
-      return false;
-    }
+  const login = (userData) => {
+    setUser(userData);
+    localStorage.setItem('token', userData.token);
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
     setUser(null);
+    localStorage.removeItem('token');
   };
 
-  const value = {
-    user,
-    login,
-    logout
-  };
+  return (
+    <AuthContext.Provider value={{ user, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
-
-export const useAuth = () => {
+export function useAuth() {
   return useContext(AuthContext);
-};
+}
 
