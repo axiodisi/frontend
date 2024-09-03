@@ -10,8 +10,9 @@ function NavBar() {
   const { user } = useAuth();
 
   return (
-    <nav>
-      <ul>
+    <nav style={{ background: '#f0f0f0', padding: '10px' }}>
+      <ul style={{ listStyle: 'none', display: 'flex', justifyContent: 'space-around' }}>
+        <li><Link to="/">Home</Link></li>
         {!user && (
           <>
             <li><Link to="/login">Login</Link></li>
@@ -33,16 +34,20 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <NavBar />
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/" element={<h1>Welcome to our app!</h1>} />
-          <Route element={<PrivateRoute />}>
-            <Route path="/dashboard" element={<h2>Dashboard (Private)</h2>} />
-          </Route>
-          {/* Add more routes as needed */}
-        </Routes>
+        <div className="App">
+          <NavBar />
+          <div style={{ padding: '20px' }}>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/" element={<h1>Welcome to our app!</h1>} />
+              <Route element={<PrivateRoute />}>
+                <Route path="/dashboard" element={<h2>Dashboard (Private)</h2>} />
+              </Route>
+              {/* Add more routes as needed */}
+            </Routes>
+          </div>
+        </div>
       </Router>
     </AuthProvider>
   );

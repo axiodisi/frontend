@@ -20,24 +20,33 @@ function Signup() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Username"
-                required
-            />
-            <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-                required
-            />
-            <button type="submit">Sign Up</button>
-        </form>
+        <div style={{ maxWidth: '300px', margin: '0 auto', textAlign: 'center' }}>
+            <h2>Sign Up</h2>
+            <form onSubmit={handleSubmit}>
+                {error && <p style={{ color: 'red' }}>{error}</p>}
+                <div style={{ marginBottom: '10px' }}>
+                    <input
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Username"
+                        required
+                        style={{ width: '100%', padding: '5px' }}
+                    />
+                </div>
+                <div style={{ marginBottom: '10px' }}>
+                    <input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Password"
+                        required
+                        style={{ width: '100%', padding: '5px' }}
+                    />
+                </div>
+                <button type="submit" style={{ width: '100%', padding: '10px' }}>Sign Up</button>
+            </form>
+        </div>
     );
 }
 

@@ -12,7 +12,7 @@ function Logout() {
     };
 
     return (
-        <button onClick={handleLogout}>Logout</button>
+        <button onClick={handleLogout} style={{ padding: '5px 10px' }}>Logout</button>
     );
 }
 
